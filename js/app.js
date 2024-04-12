@@ -11,17 +11,28 @@ for (let button of buttons) {
   });
 }
 
-const searchInput = document.querySelector("#searchInput");
-searchInput.addEventListener("input", (e) => {
-  const inputText = e.target.value;
+const filterMusics = (searchString) => {
   for (let music of musics) {
     const musicName = music.querySelector("h4").innerText;
-    if (musicName.toLowerCase().includes(inputText.toLowerCase())) {
+    if (musicName.toLowerCase().includes(searchString.toLowerCase())) {
       music.style.display = "block";
     } else {
       music.style.display = "none";
     }
   }
+};
+
+const searchInput = document.querySelector("#searchInput");
+searchInput.focus();
+searchInput.addEventListener("input", (e) => {
+  const inputText = e.target.value;
+  filterMusics(inputText);
+});
+
+document.getElementById("clearButton").addEventListener("click", function () {
+  searchInput.value = "";
+  searchInput.focus();
+  filterMusics("");
 });
 
 // app.js
