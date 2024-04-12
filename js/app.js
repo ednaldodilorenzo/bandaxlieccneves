@@ -1,6 +1,3 @@
-const musics = document.querySelectorAll(".playlist li");
-console.log(musics);
-
 const buttons = document.querySelectorAll(".cifra a");
 for (let button of buttons) {
   button.addEventListener("click", (e) => {
@@ -10,6 +7,8 @@ for (let button of buttons) {
       musicLyric.style.display === "block" ? "none" : "block";
   });
 }
+
+const musics = document.querySelectorAll(".playlist li");
 
 const filterMusics = (searchString) => {
   for (let music of musics) {
