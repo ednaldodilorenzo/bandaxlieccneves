@@ -13,15 +13,21 @@ const changeTextSize = (e) => {
 };
 
 class Music {
-  constructor(title, source) {
+  constructor(title, source, theme, tone) {
     this.title = title;
     this.source = source;
+    this.theme = theme;
+    this.tone = tone;
   }
 
   render() {
     const rootElement = document.createElement("li");
     rootElement.innerHTML = `
         <h4>${this.title}</h4>
+        <div style="display: flex; justify-content: space-between;">
+          <h5>Tom: ${this.tone}</h5>
+          <h5>Tema: ${this.theme}</h5>          
+        </div>
         <audio preload="metadata" controls>
           <source src="static/${this.source}.mp3" type="audio/mp3" />
           Seu navegador não suporta o elemento de áudio.
@@ -45,9 +51,9 @@ class Music {
       cipherElement.innerHTML = `
         <div class="modal-content">
           <span class="close">&times;</span>
-          <h2>${this.title}</h2>
-          <button style="padding: 2px 4px" id="increaseSize">+A</button>
-          <button style="padding: 2px 4px" id="decreaseSize">-A</button>
+          <h2 style="margin: 5px;">${this.title}</h2>
+          <button class="button-68" id="increaseSize">+A</button>
+          <button class="button-68" id="decreaseSize">-A</button>
         </div>  
       `;
       const closeButton = cipherElement.querySelector(".close");
@@ -72,6 +78,7 @@ class Music {
           // Set the innerHTML of the target element
           const modalContent = cipherElement.querySelector(".modal-content");
           const cipherContent = document.createElement("pre");
+          cipherContent.style.padding = "5px";
           cipherContent.innerHTML = html;
           modalContent.appendChild(cipherContent);
           cipherElement.style.display = "block";
@@ -87,26 +94,32 @@ class Music {
 }
 
 const music_list = [
-  new Music("Restaura a Família (E) - Tema", "restaura_familia"),
-  new Music("Acaso não sabeis (C) (Jantar Mariano)", "acaso-nao-sabeis"),
-  new Music("Te agradeço (E) (Levada)", "eu-te-agradeco"),
-  new Music("Por isso eu te louvo (E) (Levada)", "por-isso-eu-te-louvo"),
+  new Music("Restaura a Família", "restaura_familia", "Tema", "E"),
+  new Music("Acaso não sabeis", "acaso-nao-sabeis", "Jantar Mariano", "C"),
+  new Music("Te agradeço", "eu-te-agradeco", "Levada", "E"),
+  new Music("Por isso eu te louvo", "por-isso-eu-te-louvo", "Levada", "E"),
   new Music(
-    "Caminhar, sorrir e cantar (A) (Levada) - 22/04/2024",
-    "caminhar-sorrrir-cantar"
+    "Caminhar, sorrir e cantar - 22/04/2024",
+    "caminhar-sorrrir-cantar",
+    "Levada",
+    "A"
   ),
   new Music(
-    "Hoje é tempo de louvar a Deus (E) (Levada) - 22/04/2024",
-    "hoje-e-tempo-de-louvar-a-deus"
+    "Hoje é tempo de louvar a Deus - 22/04/2024",
+    "hoje-e-tempo-de-louvar-a-deus",
+    "Levada",
+    "E"
   ),
-  new Music("Bom e Agradável (E) (Levada) - 22/04/2024", "bom-e-agradavel"),
-  new Music("Te encontrar (G) (Levada) - 22/04/2024", "te-encontrar"),
+  new Music("Bom e Agradável - 22/04/2024", "bom-e-agradavel", "Levada", "E"),
+  new Music("Te encontrar - 22/04/2024", "te-encontrar", "Levada", "G"),
   new Music(
-    "Eu quero ser de Deus (A) (Levada) - 22/04/2024",
-    "eu-quero-ser-de-deus"
+    "Eu quero ser de Deus - 22/04/2024",
+    "eu-quero-ser-de-deus",
+    "Levada",
+    "A"
   ),
-  new Music("Obra Nova (D) (Levada) - 22/04/2024", "obra-nova"),
-  new Music("O amor (C) (Levada) - 22/04/2024", "o-amor"),
+  new Music("Obra Nova - 22/04/2024", "obra-nova", "Levada", "D"),
+  new Music("O amor - 22/04/2024", "o-amor", "Levada", "C"),
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
