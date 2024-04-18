@@ -140,6 +140,21 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.focus();
     filterMusics("");
   });
+
+  document.addEventListener(
+    "play",
+    function (e) {
+      // Get all audio elements on the page
+      var allAudios = document.getElementsByTagName("audio");
+      // Pause other audios
+      for (var i = 0; i < allAudios.length; i++) {
+        if (allAudios[i] !== e.target) {
+          allAudios[i].pause();
+        }
+      }
+    },
+    true
+  );
 });
 
 // app.js
