@@ -96,6 +96,7 @@ input[type="submit"]:hover {
   min-height: 100%;
   box-shadow: none;
   font-size: 14px;
+  overflow-y: auto;
 }
 
 .close {

@@ -2,7 +2,7 @@ const buttons = document.querySelectorAll(".cifra a");
 class Music {
   constructor(title, source) {
     this.title = title;
-    this.source = source;    
+    this.source = source;
   }
 
   render() {
@@ -33,12 +33,17 @@ class Music {
         <div class="modal-content">
           <span class="close">&times;</span>
           <h2>${this.title}</h2>
+          <button id="increaseSize">+A</button>
+          <button id="decreaseSize">-A</button>
         </div>  
-      `
+      `;
       const closeButton = cipherElement.querySelector(".close");
       closeButton.addEventListener("click", () => {
         cipherElement.style.display = "none";
       });
+
+      const increaseSizeButton = cipherElement.querySelector("#increaseSize");
+      const decreaseSizeButton = cipherElement.querySelector("#decreaseSize");
 
       fetch(viewCipherButton.href)
         .then((response) => {
@@ -56,6 +61,20 @@ class Music {
           modalContent.appendChild(cipherContent);
           cipherElement.style.display = "block";
           rootElement.appendChild(cipherElement);
+          increaseSizeButton.addEventListener("click", () => {
+            var style = window
+              .getComputedStyle(cipherContent, null)
+              .getPropertyValue("font-size");
+            var currentSize = parseFloat(style);
+            cipherContent.style.fontSize = currentSize + 1 + "px";
+          });
+          decreaseSizeButton.addEventListener("click", () => {
+            var style = window
+              .getComputedStyle(cipherContent, null)
+              .getPropertyValue("font-size");
+            var currentSize = parseFloat(style);
+            cipherContent.style.fontSize = currentSize - 1 + "px";
+          });
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
@@ -67,50 +86,26 @@ class Music {
 }
 
 const music_list = [
-  new Music(
-    "Restaura a Família (E) - Tema",
-    "restaura_familia",
-  ),
-  new Music(
-    "Acaso não sabeis (C) (Jantar Mariano)",
-    "acaso-nao-sabeis",
-  ),
-  new Music(
-    "Te agradeço (E) (Levada)",
-    "eu-te-agradeco",
-  ),
-  new Music(
-    "Por isso eu te louvo (E) (Levada)",
-    "por-isso-eu-te-louvo",
-  ),
+  new Music("Restaura a Família (E) - Tema", "restaura_familia"),
+  new Music("Acaso não sabeis (C) (Jantar Mariano)", "acaso-nao-sabeis"),
+  new Music("Te agradeço (E) (Levada)", "eu-te-agradeco"),
+  new Music("Por isso eu te louvo (E) (Levada)", "por-isso-eu-te-louvo"),
   new Music(
     "Caminhar, sorrir e cantar (A) (Levada) - 22/04/2024",
-    "caminhar-sorrrir-cantar",
+    "caminhar-sorrrir-cantar"
   ),
   new Music(
     "Hoje é tempo de louvar a Deus (E) (Levada) - 22/04/2024",
-    "hoje-e-tempo-de-louvar-a-deus",
+    "hoje-e-tempo-de-louvar-a-deus"
   ),
-  new Music(
-    "Bom e Agradável (E) (Levada) - 22/04/2024",
-    "bom-e-agradavel",
-  ),
-  new Music(
-    "Te encontrar (G) (Levada) - 22/04/2024",
-    "te-encontrar",
-  ),
+  new Music("Bom e Agradável (E) (Levada) - 22/04/2024", "bom-e-agradavel"),
+  new Music("Te encontrar (G) (Levada) - 22/04/2024", "te-encontrar"),
   new Music(
     "Eu quero ser de Deus (A) (Levada) - 22/04/2024",
-    "eu-quero-ser-de-deus",
+    "eu-quero-ser-de-deus"
   ),
-  new Music(
-    "Obra Nova (D) (Levada) - 22/04/2024",
-    "obra-nova",
-  ),
-  new Music(
-    "O amor (C) (Levada) - 22/04/2024",
-    "o-amor",
-  ),
+  new Music("Obra Nova (D) (Levada) - 22/04/2024", "obra-nova"),
+  new Music("O amor (C) (Levada) - 22/04/2024", "o-amor"),
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
