@@ -1,4 +1,17 @@
 const buttons = document.querySelectorAll(".cifra a");
+
+const changeTextSize = (e) => {
+  const buttonText = e.target.innerText;
+  const cipherContent = e.target.parentElement.querySelector("pre");
+  var style = window
+    .getComputedStyle(cipherContent, null)
+    .getPropertyValue("font-size");
+  var currentSize = parseFloat(style);
+  cipherContent.style.fontSize = buttonText.startsWith("+")
+    ? currentSize + 1 + "px"
+    : currentSize - 1 + "px";
+};
+
 class Music {
   constructor(title, source) {
     this.title = title;
@@ -33,8 +46,8 @@ class Music {
         <div class="modal-content">
           <span class="close">&times;</span>
           <h2>${this.title}</h2>
-          <button id="increaseSize">+A</button>
-          <button id="decreaseSize">-A</button>
+          <button style="padding: 2px 4px" id="increaseSize">+A</button>
+          <button style="padding: 2px 4px" id="decreaseSize">-A</button>
         </div>  
       `;
       const closeButton = cipherElement.querySelector(".close");
@@ -43,7 +56,9 @@ class Music {
       });
 
       const increaseSizeButton = cipherElement.querySelector("#increaseSize");
+      increaseSizeButton.addEventListener("click", changeTextSize);
       const decreaseSizeButton = cipherElement.querySelector("#decreaseSize");
+      decreaseSizeButton.addEventListener("click", changeTextSize);
 
       fetch(viewCipherButton.href)
         .then((response) => {
@@ -61,20 +76,6 @@ class Music {
           modalContent.appendChild(cipherContent);
           cipherElement.style.display = "block";
           rootElement.appendChild(cipherElement);
-          increaseSizeButton.addEventListener("click", () => {
-            var style = window
-              .getComputedStyle(cipherContent, null)
-              .getPropertyValue("font-size");
-            var currentSize = parseFloat(style);
-            cipherContent.style.fontSize = currentSize + 1 + "px";
-          });
-          decreaseSizeButton.addEventListener("click", () => {
-            var style = window
-              .getComputedStyle(cipherContent, null)
-              .getPropertyValue("font-size");
-            var currentSize = parseFloat(style);
-            cipherContent.style.fontSize = currentSize - 1 + "px";
-          });
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
