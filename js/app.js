@@ -26,7 +26,7 @@ class Music {
         <h4>${this.title}</h4>
         <div style="display: flex; justify-content: space-between;">
           <h5>Tom: ${this.tone}</h5>
-          <h5>Tema: ${this.theme}</h5>          
+          <h5 class="music-theme">${this.theme}</h5>          
         </div>
         <audio preload="metadata" controls>
           <source src="static/${this.source}.mp3" type="audio/mp3" />
@@ -118,7 +118,7 @@ const music_list = [
     "Levada",
     "A"
   ),
-  new Music("Obra Nova - 22/04/2024", "obra-nova", "Levada", "D"),
+  new Music("Obra Nova - 22/04/2024", "obra-nova", "Levada", "C"),
   new Music("O amor - 22/04/2024", "o-amor", "Levada", "C"),
 ];
 
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const filterMusics = (searchString) => {
     for (let music of musics) {
-      const musicName = music.querySelector("h4").innerText;
+      const musicName = music.querySelector("h4").innerText + " " + music.querySelector(".music-theme").innerText;
       if (musicName.toLowerCase().includes(searchString.toLowerCase())) {
         music.style.display = "block";
       } else {
@@ -144,9 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const searchInput = document.querySelector("#searchInput");
   searchInput.focus();
-  searchInput.addEventListener("input", (e) => {
-    const inputText = e.target.value;
-    filterMusics(inputText);
+  searchInput.addEventListener("input", (e) => {    
+    filterMusics(e.target.value);
   });
 
   document.getElementById("clearButton").addEventListener("click", function () {
