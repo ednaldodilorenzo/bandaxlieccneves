@@ -119,7 +119,7 @@ const music_list = [
     "A"
   ),
   new Music("Obra Nova - 22/04/2024", "obra-nova", "Levada", "C"),
-  new Music("O amor - 22/04/2024", "o-amor", "Levada", "C"),
+  new Music("O amor - 22/04/2024", "o-amor", "Levada", "D"),
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
