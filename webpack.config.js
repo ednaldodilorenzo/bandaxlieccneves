@@ -3,6 +3,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const { InjectManifest } = require('workbox-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
   entry: "./js/app.js", // Entry point for your JavaScript application
@@ -14,7 +16,7 @@ module.exports = {
     rules: [
       {
         test: /\.css$/, // For .css files
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
       {
         test: /\.js$/, // For .js files
@@ -28,7 +30,18 @@ module.exports = {
       },
     ],
   },
+  optimization: {
+    minimizer: [
+      // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+      // `...`,
+      new CssMinimizerPlugin(),
+    ],
+  },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "css/[name].css",
+      chunkFilename: "css/[id].css",
+    }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: "Webpack Project",
