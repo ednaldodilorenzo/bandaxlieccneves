@@ -43,7 +43,8 @@ module.exports = {
     }),
     new InjectManifest({
       swSrc: './js/service-worker.js', // Path to your source service worker file.
-      swDest: 'service-worker.js' // Destination filename in the output directory.
+      swDest: 'service-worker.js', // Destination filename in the output directory.
+      exclude: [ /\.map$/, /^manifest.*\.js(?:on)?$/, /\.gitignore$/, /^\.DS_Store$/ ],
     }),
   ],
   mode: "development", // Set the mode to development or production

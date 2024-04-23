@@ -55,16 +55,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.addEventListener(
     "play",
     function (e) {
-      // Get all audio elements on the page
-      var allAudios = document.getElementsByTagName("audio");
-      // const playedId = e.target.closest("li");
-      // playList.playId(playedId.id);
-      // Pause other audios
-      for (var i = 0; i < allAudios.length; i++) {
-        if (allAudios[i] !== e.target) {
-          allAudios[i].pause();
-        }
-      }
+      const playedId = e.target.closest("li");
+      playList.playId(playedId.id);
+    },
+    true
+  );
+
+  document.addEventListener(
+    "ended",
+    function (e) {
+      playList.playNext();
     },
     true
   );

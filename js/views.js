@@ -126,22 +126,35 @@ export class PlayList {
   }
 
   playId(id) {
-    // if (this.currentPlaying) {
-    //     const music = this.playlistElement.querySelector(`#${this.currentPlaying}`);
-    //     const musicAudio = music.querySelector("audio");
-    //     console.log(musicAudio);
-    //     musicAudio.pause();
+    if (this.currentPlaying && this.currentPlaying !== id) {
+      const music = document.getElementById(this.currentPlaying);
+      const musicAudio = music.querySelector("audio");
+      musicAudio.pause();
+    }
+    this.currentPlaying = id;
+  }
 
-    //     const songToPlay = this.playlistElement.querySelector(`#${id}`);
-    //     const musicAudioToPlay = songToPlay.querySelector("audio");
-    //     musicAudioToPlay.play();
-    //     this.currentPlaying = id;
-    // } else {
-    //     console.log(this.playlistElement);
-    //     const music = this.playlistElement.querySelector(`#${id}`);
-    //     const musicAudio = music.querySelector("audio");
-    //     musicAudio.play();
-    //     this.currentPlaying = id;
-    // }
+  playNext() {
+    const music = document.getElementById(this.currentPlaying);
+    const musicAudio = music.querySelector("audio");
+    musicAudio.pause();
+
+    const visibleMusics = document.querySelectorAll(
+      '.playlist li:not([style*="display:none"]):not([style*="display: none"])'
+    );
+
+    for (let i = 0; i < visibleMusics.length; i++) {
+      if (visibleMusics[i].id === this.currentPlaying) {
+        if (i === visibleMusics.length - 1) {
+          const audio = visibleMusics[0].querySelector("audio");
+          audio.play();
+          return;
+        } else {
+          const audio = visibleMusics[i + 1].querySelector("audio");
+          audio.play();
+          return;
+        }
+      }
+    }
   }
 }
