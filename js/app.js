@@ -1,49 +1,9 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-import Music from "./music.js";
+import "../css/styles.css";
+import fetchCollectionData from "./request";
+import { PlayList } from "./views";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCgVnukLHkrVP6mP8oicrEZ2Sy_DxAROiE",
-  authDomain: "bandaxlieccneves.firebaseapp.com",
-  projectId: "bandaxlieccneves",
-  storageBucket: "bandaxlieccneves.appspot.com",
-  messagingSenderId: "641609237349",
-  appId: "1:641609237349:web:cb8ae5453eedbc0bb2978c",
-  measurementId: "G-65M4ZWV789",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-async function fetchCollectionData() {
-  const querySnapshot = await getDocs(collection(db, "musics"));
-  let documents = [];
-  querySnapshot.forEach((doc) => {
-    documents.push(
-      new Music(
-        doc.data().title,
-        doc.data().source,
-        doc.data().category,
-        doc.data().tone,
-        doc.data().cipher
-      )
-    );
-  });
-  return documents;
-}
-
-let music_list = [];
+let musicList = [];
 
 //const music_list = [
 //  new Music("Restaura a Família", "restaura_familia", "Tema", "E"),
@@ -75,39 +35,21 @@ let music_list = [];
 //];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const playlist = document.querySelector(".playlist");
-  music_list = await fetchCollectionData();
+  musicList = await fetchCollectionData();
+  const playList = new PlayList(musicList);
 
-  for (const music of music_list) {
-    playlist.appendChild(music.render());
-  }
-
-  const musics = document.querySelectorAll(".playlist li");
-
-  const filterMusics = (searchString) => {
-    for (let music of musics) {
-      const musicName =
-        music.querySelector("h4").innerText +
-        " " +
-        music.querySelector(".music-theme").innerText;
-      if (musicName.toLowerCase().includes(searchString.toLowerCase())) {
-        music.style.display = "block";
-      } else {
-        music.style.display = "none";
-      }
-    }
-  };
+  playList.render("app", musicList);
 
   const searchInput = document.querySelector("#searchInput");
   searchInput.focus();
   searchInput.addEventListener("input", (e) => {
-    filterMusics(e.target.value);
+    playList.filterMusics(e.target.value);
   });
 
   document.getElementById("clearButton").addEventListener("click", function () {
     searchInput.value = "";
     searchInput.focus();
-    filterMusics("");
+    playList.filterMusics("");
   });
 
   document.addEventListener(
@@ -115,6 +57,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     function (e) {
       // Get all audio elements on the page
       var allAudios = document.getElementsByTagName("audio");
+      // const playedId = e.target.closest("li");
+      // playList.playId(playedId.id);
       // Pause other audios
       for (var i = 0; i < allAudios.length; i++) {
         if (allAudios[i] !== e.target) {
@@ -130,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/js/service-worker.js")
+      .register("/service-worker.js")
       .then((reg) => {
         console.log("Service worker registered!", reg);
       })
