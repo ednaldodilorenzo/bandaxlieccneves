@@ -20,6 +20,7 @@ body {
   background-color: #ffffff;
   border: 1px solid #dddddd;
   border-radius: 5px;
+  /* lightsteelblue background when playing */
 }
 .playlist audio {
   width: 100%;
@@ -39,6 +40,10 @@ body {
 .music-lyric {
   display: none;
   margin: 2rem 0.5rem;
+}
+
+.music-title {
+  font-size: 1.2rem;
 }
 
 .search-box {
@@ -165,4 +170,20 @@ input[type="submit"]:hover {
 .button-68:hover {
   box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
 }
+
+#audio-player {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  height: 4rem;
+  font-size: 20px;
+  z-index: 3;
+  display: none;
+}
+
 

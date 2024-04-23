@@ -24,7 +24,7 @@ export class Music {
     const rootElement = document.createElement("li");
     rootElement.id = this.id;
     rootElement.innerHTML = `
-            <h4>${this.title}</h4>
+            <h3 class="music-title">${this.title}</h3>
             <div style="display: flex; justify-content: space-between;">
               <h5>Tom: ${this.tone}</h5>
               <h5 class="music-theme">${this.theme}</h5>          
@@ -114,7 +114,7 @@ export class PlayList {
     const musics = this.playlistElement.querySelectorAll("li");
     for (const music of musics) {
       const musicName =
-        music.querySelector("h4").innerText +
+        music.querySelector(".music-title").innerText +
         " " +
         music.querySelector(".music-theme").innerText;
       if (musicName.toLowerCase().includes(searchString.toLowerCase())) {

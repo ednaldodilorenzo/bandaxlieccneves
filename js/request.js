@@ -22,7 +22,6 @@ export default async function fetchCollectionData() {
   const querySnapshot = await getDocs(collection(db, "musics"));
   let documents = [];
   querySnapshot.forEach((doc) => {
-    console.log(doc.id);
     documents.push(
       new Music(
         doc.data().title,
