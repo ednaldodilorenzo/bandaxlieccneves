@@ -26,14 +26,20 @@ body {
   width: 100%;
   margin-top: 10px;
 }
-.cifra {
+
+.music-list_item__details {
+  display: flex;
+  justify-content: space-between;
+}
+
+.music-list_item__cipher {
   margin-top: 10px;
 }
-.cifra a {
+.music-list_item__cipher a {
   text-decoration: none;
   color: #008000;
 }
-.cifra a:hover {
+.music-list_item__cipher a:hover {
   text-decoration: underline;
 }
 
@@ -42,7 +48,7 @@ body {
   margin: 2rem 0.5rem;
 }
 
-.music-title {
+.music-list_item__title {
   font-size: 1.2rem;
 }
 
@@ -83,7 +89,7 @@ body {
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;  
+  overflow: auto;
 }
 
 .modal-content {
@@ -124,12 +130,13 @@ body {
   background-color: #27ae60;
   border-radius: 8px;
   border-style: none;
-  box-shadow: rgba(39, 174, 96, .15) 0 4px 9px;
+  box-shadow: rgba(39, 174, 96, 0.15) 0 4px 9px;
   box-sizing: border-box;
   color: #fff;
   cursor: pointer;
   display: inline-block;
-  font-family: Inter,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-family: Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
+    sans-serif;
   font-size: 16px;
   font-weight: 600;
   letter-spacing: normal;
@@ -140,12 +147,12 @@ body {
   text-align: center;
   text-decoration: none;
   transform: translate3d(0, 0, 0);
-  transition: all .3s;
+  transition: all 0.3s;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
   width: 35px;
-  padding: 2px 4px; 
+  padding: 2px 4px;
   margin: 5px;
   vertical-align: top;
   white-space: nowrap;
@@ -155,16 +162,16 @@ body {
   background-color: #1e8449;
   opacity: 1;
   transform: translateY(0);
-  transition-duration: .35s;
+  transition-duration: 0.35s;
 }
 
 .button-68:active {
   transform: translateY(2px);
-  transition-duration: .35s;
+  transition-duration: 0.35s;
 }
 
 .button-68:hover {
-  box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
+  box-shadow: rgba(39, 174, 96, 0.2) 0 6px 12px;
 }
 
 #audio-player {
@@ -172,14 +179,39 @@ body {
   bottom: 0;
   right: 0;
   width: 100%;
-  background-color: #333;
+  background-color: #167b20;
   color: white;
   text-align: center;
-  padding: 10px 0;
-  height: 4rem;
+  padding: 10px 5px;
+  height: 5rem;
   font-size: 20px;
   z-index: 3;
   display: none;
 }
 
+/* styles.css */
+.audio-player {
+  margin: 20px;
+}
 
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: space-between;
+}
+
+.progress-bar {
+  height: 10px;
+  background-color: #ccc;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 5px;
+}
+
+.progress {
+  height: 100%;
+  background-color: #007bff;
+  width: 0%;
+  position: absolute;
+}

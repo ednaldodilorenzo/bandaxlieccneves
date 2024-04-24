@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { ref, getStorage, getDownloadURL } from "firebase/storage";
 import { Music } from "./views";
 
 // Your web app's Firebase configuration
@@ -16,9 +17,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
 const db = getFirestore(app);
 
-export default async function fetchCollectionData() {
+export async function fetchCollectionData() {
   const querySnapshot = await getDocs(collection(db, "musics"));
   let documents = [];
   querySnapshot.forEach((doc) => {
@@ -34,4 +36,9 @@ export default async function fetchCollectionData() {
     );
   });
   return documents;
+}
+
+export async function getFileURL(audioPath) {
+  const storageRef = ref(storage, audioPath);
+  return await getDownloadURL(storageRef);
 }

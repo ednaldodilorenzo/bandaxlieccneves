@@ -22,23 +22,23 @@ export class Music {
 
   render() {
     const rootElement = document.createElement("li");
-    rootElement.id = this.id;
+    rootElement.id = this.id;    
     rootElement.innerHTML = `
-            <h3 class="music-title">${this.title}</h3>
-            <div style="display: flex; justify-content: space-between;">
-              <h5>Tom: ${this.tone}</h5>
-              <h5 class="music-theme">${this.theme}</h5>          
+            <h3 class="music-list_item__title">${this.title}</h3>
+            <div class="music-list_item__details">
+              <h5 class="music-list_item__details__tone">Tom: ${this.tone}</h5>
+              <h5 class="music-list_item__details__theme">${this.theme}</h5>
             </div>
-            <audio preload="metadata" controls>
+            <audio class="music-list_item__audio" preload="metadata" controls>
               <source src="${this.source}" type="audio/mp3" />
               Seu navegador não suporta o elemento de áudio.
             </audio>
-            <div class="cifra">
-              <a id="toggleLyric" href="cifras/${this.cipher}".html>Ver Cifra</a>
+            <div class="music-list_item__cipher">
+              <a class="music-list_item__cipher__link" href="cifras/${this.cipher}".html>Ver Cifra</a>
             </div>
         `;
 
-    const viewCipherButton = rootElement.querySelector("#toggleLyric");
+    const viewCipherButton = rootElement.querySelector(".music-list_item__cipher__link");
     viewCipherButton.addEventListener("click", (e) => {
       e.preventDefault();
       let cipherElement = rootElement.querySelector(".modal");
@@ -80,6 +80,7 @@ export class Music {
           const modalContent = cipherElement.querySelector(".modal-content");
           const cipherContent = document.createElement("pre");
           cipherContent.style.padding = "5px";
+          cipherContent.style.marginBottom = "100px";
           cipherContent.innerHTML = html;
           modalContent.appendChild(cipherContent);
           cipherElement.style.display = "block";
@@ -114,9 +115,9 @@ export class PlayList {
     const musics = this.playlistElement.querySelectorAll("li");
     for (const music of musics) {
       const musicName =
-        music.querySelector(".music-title").innerText +
+        music.querySelector(".music-list_item__title").innerText +
         " " +
-        music.querySelector(".music-theme").innerText;
+        music.querySelector(".music-list_item__details__theme").innerText;
       if (musicName.toLowerCase().includes(searchString.toLowerCase())) {
         music.style.display = "block";
       } else {

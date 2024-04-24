@@ -1,18 +1,19 @@
 // Import the functions you need from the SDKs you need
 import "../css/styles.css";
-import fetchCollectionData from "./request";
-import { PlayList } from "./views";
+import { fetchCollectionData, getFileURL } from "./request";
+import { Music, PlayList } from "./views";
 
 let musicList = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  musicList = await fetchCollectionData();
+  musicList = [
+    new Music("Teste", "teste", "Levada", "C", "acaso-nao-sabeis.html", "1")
+  ];//await fetchCollectionData();
   const playList = new PlayList(musicList);
 
   playList.render("app", musicList);
 
-  const searchInput = document.querySelector("#searchInput");
-  searchInput.focus();
+  const searchInput = document.querySelector("#searchInput");  
   searchInput.addEventListener("input", (e) => {
     playList.filterMusics(e.target.value);
   });
@@ -39,6 +40,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     },
     true
   );
+
+  const audioPlayerPlayButton = document.getElementById("audioPlayerPlayButton");
+  const audioPlayer = document.getElementById("audioPlayer");
+  audioPlayerPlayButton.addEventListener("click", async () => {
+    const fileURL = await getFileURL("audios/acaso-nao-sabeis.mp3");
+    audioPlayer.src = fileURL;
+    audioPlayer.load();
+    audioPlayer.play();
+  });
 });
 
 // app.js
