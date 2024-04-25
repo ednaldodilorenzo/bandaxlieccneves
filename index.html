@@ -16,31 +16,33 @@
     <div id="app" style="margin-bottom: 100px"></div>
     <div id="audio-player">
       <audio id="audio" preload="auto">
-        <source src="your-audio-file.mp3" type="audio/mp3" />
+        <source type="audio/mp3" />
         Your browser does not support the audio tag.
       </audio>
       <div class="progress-bar" id="progress-bar">
-        <div class="progress" id="progress"></div>
+        <div class="progress" id="progress">
+          <div class="progress-handle" id="progress-handle"></div>
+        </div>
       </div>
       <div class="controls">
-        <div style="display: flex">
-          <a>
+        <div class="controls-buttons">
+          <a href="javascript:void(0)" id="audioPlayerPreviousButton">
             <img src="images/skip-previous-regular-24.png" />
           </a>
-          <a id="audioPlayerPlayButton">
-            <img src="images/pause-regular-24.png" />
+          <a href="javascript:void(0)" id="audioPlayerPlayPauseButton">
+            <img src="images/play-regular-24.png" />
           </a>
-          <a>
+          <a href="javascript:void(0)" id="audioPlayerNextButton">
             <img src="images/skip-next-regular-24.png" />
           </a>
         </div>
-        <div style="width: 55%">
-          <span id="playing-music__title">Faz do meu nada amor - 29/04</span>
+        <div>
+          <span id="playing-music__title"></span>
         </div>
-        <a href="javascript:void(0)"
+        <a id="audioPlayerCloseButton" href="javascript:void(0)"
           ><img src="images/x-regular-24.png" alt=""
         /></a>
       </div>
-    </div>    
+    </div>
   </body>
 </html>
