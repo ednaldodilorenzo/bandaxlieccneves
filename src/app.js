@@ -26,6 +26,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     nextMusic && audioPlayer.play(nextMusic);
   });
 
+  if ("mediaSession" in navigator) {
+    // Previous Track
+    navigator.mediaSession.setActionHandler("previoustrack", () => {
+      const previousMusic = playList.getPreviousMusic();
+      if (previousMusic) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: previousMusic.title,
+          artist: "Banda ECC Neves",
+          album: "XLI ECC Neves",
+          artwork: [],
+        });
+        audioPlayer.play(previousMusic);
+      }
+    });
+
+    // Next Track
+    navigator.mediaSession.setActionHandler("nexttrack", () => {
+      const nextMusic = playList.getNextMusic();
+      nextMusic && audioPlayer.play(nextMusic);
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+      audioPlayer.pause();
+    });
+
+    // Add other handlers as needed, e.g., play, pause, stop, seekbackward, seekforward
+  }
+
   const searchInput = document.querySelector("#searchInput");
   searchInput.addEventListener("input", (e) => {
     playList.filterMusics(e.target.value);

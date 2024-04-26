@@ -228,12 +228,23 @@ export class AudioPlayer extends EventEmitter {
     this.paused = false;
     this.currentMusic = undefined;
     this.rootElement = document.getElementById(rootElementId);
+    this.render();
+  }
+
+  render() {
+    const previousButton = this.rootElement.querySelector(
+      "#audioPlayerPreviousButton"
+    );
+    previousButton.addEventListener("click", this.previousTrack.bind(this));
+
+    const nextButton = this.rootElement.querySelector("#audioPlayerNextButton");
+    nextButton.addEventListener("click", this.nextTrack.bind(this));
+
     const playPauseButton = this.rootElement.querySelector(
       "#audioPlayerPlayPauseButton"
     );
     playPauseButton.addEventListener("click", () => {
       if (this.playing) {
-        console.log("Entrou no if playin");
         this.pause();
       } else {
         this.play(this.currentMusic);
@@ -249,11 +260,6 @@ export class AudioPlayer extends EventEmitter {
       this.rootElement.style.transform = "translateY(100%)";
     });
 
-    const nextButton = this.rootElement.querySelector("#audioPlayerNextButton");
-    nextButton.addEventListener("click", () => {
-      this.dispatchEvent("next-clicked");
-    });
-
     const progressBar = document.getElementById("progress-bar");
     const progress = document.getElementById("progress");
     const progressHandle = document.getElementById("progress-handle");
@@ -261,22 +267,11 @@ export class AudioPlayer extends EventEmitter {
     audio.addEventListener("timeupdate", () => {
       const percentage = (audio.currentTime / audio.duration) * 100;
       progress.style.width = percentage + "%";
-      progressHandle.style.left = `calc(${percentage}% - 5px)`;
+      progressHandle.style.left = `calc(${percentage}%) - 5px`;
     });
 
     audio.addEventListener("ended", () => {
       this.dispatchEvent("next-clicked");
-    });
-
-    const previousButton = this.rootElement.querySelector(
-      "#audioPlayerPreviousButton"
-    );
-    previousButton.addEventListener("click", (e) => {
-      if (audio.currentTime >= 4) {
-        audio.currentTime = 0;
-      } else {
-        this.dispatchEvent("previous-clicked");
-      }
     });
 
     progressBar.addEventListener("click", (e) => {
@@ -294,6 +289,10 @@ export class AudioPlayer extends EventEmitter {
       this.tooglePlayPauseIcon(false);
       this.paused = false;
       this.playing = true;
+      this.rootElement.style.visibility = "visible";
+      this.rootElement.style.opacity = "1";
+      this.rootElement.style.transform = "translateY(0)";
+      this.currentMusic.setPlaying();
       return;
     }
     this.currentMusic && this.currentMusic.setNotPlaying();
@@ -319,6 +318,19 @@ export class AudioPlayer extends EventEmitter {
     this.paused = true;
     audio.pause();
     this.tooglePlayPauseIcon(true);
+  }
+
+  nextTrack() {
+    this.dispatchEvent("next-clicked");
+  }
+
+  previousTrack() {
+    console.log("Teste");
+    if (audio.currentTime >= 4) {
+      audio.currentTime = 0;
+    } else {
+      this.dispatchEvent("previous-clicked");
+    }
   }
 
   tooglePlayPauseIcon(play) {

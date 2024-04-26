@@ -286,9 +286,7 @@ body {
 
 #playing-music__title {
   font-size: 15px;
-  font-weight: bold;
-  font-family: Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
-    sans-serif;
+  font-weight: bold;  
 }
 
 .progress-handle {
