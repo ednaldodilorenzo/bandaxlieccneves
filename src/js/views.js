@@ -97,7 +97,7 @@ export class Music extends EventEmitter {
       cipherElement.innerHTML = `
             <div class="modal-content">
               <span class="close">&times;</span>
-              <h2 style="margin: 5px;">${this.title}</h2>
+              <h2 class="modal-title">${this.title}</h2>
               <button class="button-68" id="increaseSize">+A</button>
               <button class="button-68" id="decreaseSize">-A</button>
             </div>  
@@ -248,12 +248,6 @@ export class AudioPlayer extends EventEmitter {
       this.rootElement.style.opacity = "0";
       this.rootElement.style.transform = "translateY(100%)";
     });
-    const previousButton = this.rootElement.querySelector(
-      "#audioPlayerPreviousButton"
-    );
-    previousButton.addEventListener("click", () => {
-      this.dispatchEvent("previous-clicked");
-    });
 
     const nextButton = this.rootElement.querySelector("#audioPlayerNextButton");
     nextButton.addEventListener("click", () => {
@@ -272,6 +266,17 @@ export class AudioPlayer extends EventEmitter {
 
     audio.addEventListener("ended", () => {
       this.dispatchEvent("next-clicked");
+    });
+
+    const previousButton = this.rootElement.querySelector(
+      "#audioPlayerPreviousButton"
+    );
+    previousButton.addEventListener("click", (e) => {
+      if (audio.currentTime >= 4) {
+        audio.currentTime = 0;
+      } else {
+        this.dispatchEvent("previous-clicked");
+      }
     });
 
     progressBar.addEventListener("click", (e) => {

@@ -2,13 +2,13 @@
 import "./css/styles.css";
 import { PlayList, AudioPlayer } from "./js/views";
 
-let musicList = [];
+document.addEventListener("DOMContentLoaded", async () => {
+  const requestModule = await import(
+    import.meta.env.DEV ? "./js/request.js" : "./js/request.js"
+  );
+  const musicList = await requestModule.fetchCollectionData();
 
-document.addEventListener("DOMContentLoaded", async () => {  
-  const requestModule = await import(import.meta.env.DEV ? "./js/request.js" : "./js/request.js")
-  musicList = await requestModule.fetchCollectionData();
-  
-  const playList = new PlayList(musicList);
+  const playList = new PlayList();
   const audioPlayer = new AudioPlayer("audio-player");
 
   playList.render("app", musicList);
@@ -17,12 +17,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   audioPlayer.addEventListener("previous-clicked", () => {
-    const previousMusic = playList.getPreviousMusic(); 
+    const previousMusic = playList.getPreviousMusic();
     previousMusic && audioPlayer.play(previousMusic);
   });
 
   audioPlayer.addEventListener("next-clicked", () => {
-    const nextMusic = playList.getNextMusic(); 
+    const nextMusic = playList.getNextMusic();
     nextMusic && audioPlayer.play(nextMusic);
   });
 
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     searchInput.value = "";
     searchInput.focus();
     playList.filterMusics("");
-  });  
+  });
 });
 
 // app.js

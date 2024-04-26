@@ -118,6 +118,10 @@ body {
   background-color: #f0f0f0;
 }
 
+.modal-title {
+  margin: 5px;
+}
+
 .close {
   color: white;
   float: right;
