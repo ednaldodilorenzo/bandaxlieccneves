@@ -241,28 +241,28 @@ body {
 }
 
 .play-button.md {
-  background: url("images/play-regular-36.png");
+  background: url("/images/play-regular-36.png");
   width: 35px;
   height: 54px;
   background-position: center;
 }
 
 .skip-previous-button.md {
-  background: url("images/skip-previous-regular-36.png");
+  background: url("/images/skip-previous-regular-36.png");
   width: 35px;
   height: 54px;
   background-position: center;
 }
 
 .skip-next-button.md {
-  background: url("images/skip-next-regular-36.png");
+  background: url("/images/skip-next-regular-36.png");
   width: 35px;
   height: 54px;
   background-position: center;
 }
 
 .pause-button.md {
-  background: url("images/pause-regular-36.png");
+  background: url("/images/pause-regular-36.png");
   width: 35px;
   height: 54px;
   background-position: center;
