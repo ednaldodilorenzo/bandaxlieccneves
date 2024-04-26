@@ -17,11 +17,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   audioPlayer.addEventListener("previous-clicked", () => {
-    audioPlayer.play(playList.getPreviousMusic());
+    const previousMusic = playList.getPreviousMusic(); 
+    previousMusic && audioPlayer.play(previousMusic);
   });
 
   audioPlayer.addEventListener("next-clicked", () => {
-    audioPlayer.play(playList.getNextMusic());
+    const nextMusic = playList.getNextMusic(); 
+    nextMusic && audioPlayer.play(nextMusic);
   });
 
   const searchInput = document.querySelector("#searchInput");

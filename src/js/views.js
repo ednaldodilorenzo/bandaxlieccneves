@@ -69,10 +69,10 @@ export class Music extends EventEmitter {
             <div class="music-list_item__details">
               <h5 class="music-list_item__details__tone">Tom: ${this.tone}</h5>
               <h5 class="music-list_item__details__theme">${this.theme}</h5>
-            </div>
-            <button class="musicPlayButton">Play</button>
+            </div>            
             <div class="music-list_item__cipher">
               <a class="music-list_item__cipher__link" href="cifras/${this.cipher}".html>Ver Cifra</a>
+              <button class="button-68 music-list_item__play"><img src="images/play-regular-24.png"/></button>
             </div>
         `;
 
@@ -144,6 +144,7 @@ export class PlayList extends EventEmitter {
   constructor() {
     super();
     this.musics = [];
+    this.filteredMusics = [];
     this.currentIndex = -1;
     this.currentPlaying = "";
     this.playlistElement = document.createElement("ul");
@@ -151,11 +152,15 @@ export class PlayList extends EventEmitter {
   }
 
   render(elementId, musics) {
-    this.musics = musics;
+    this.musics = this.filteredMusics = musics;
     this.currentIndex = musics ? 0 : -1;
     const rootElement = document.getElementById(elementId);
     for (const music of musics) {
       music.addEventListener("music-played", (e) => {
+        const musicPlayed = this.musics.findIndex(
+          (music) => music.id === e.target.id
+        );
+        this.currentIndex = musicPlayed;
         this.dispatchEvent("playlist-music-played", e.target);
       });
       this.playlistElement.appendChild(music.render());
@@ -167,15 +172,15 @@ export class PlayList extends EventEmitter {
   filterMusics(searchString) {
     const musics = this.playlistElement.querySelectorAll("li");
     for (const music of musics) {
-      const musicName =
-        music.querySelector(".music-list_item__title").innerText +
-        " " +
-        music.querySelector(".music-list_item__details__theme").innerText;
-      if (musicName.toLowerCase().includes(searchString.toLowerCase())) {
-        music.style.display = "block";
-      } else {
-        music.style.display = "none";
-      }
+      music.style.display = "none";
+    }
+    this.filteredMusics = this.musics.filter((m) =>
+      m.title.toLowerCase().includes(searchString.toLowerCase())
+    );
+    this.currentIndex = 0;
+    for (const music of this.filteredMusics) {
+      const musicElement = document.getElementById(music.id);
+      musicElement.style.display = "block";
     }
   }
 
@@ -189,45 +194,30 @@ export class PlayList extends EventEmitter {
   }
 
   getNextMusic() {
-    this.musics[this.currentIndex].setNotPlaying();
+    if (this.filteredMusics.length === 0) {
+      return;
+    }
+    this.filteredMusics[this.currentIndex].setNotPlaying();
     this.currentIndex =
-      this.currentIndex + 1 > this.musics.length ? 0 : (this.currentIndex += 1);
-    this.musics[this.currentIndex].setPlaying();
-    return this.musics[this.currentIndex];
+      this.currentIndex + 1 >= this.filteredMusics.length
+        ? 0
+        : (this.currentIndex += 1);
+    this.filteredMusics[this.currentIndex].setPlaying();
+    return this.filteredMusics[this.currentIndex];
   }
 
   getPreviousMusic() {
-    this.musics[this.currentIndex].setNotPlaying();
+    if (this.filteredMusics.length === 0) {
+      return;
+    }
+    this.filteredMusics &&
+      this.filteredMusics[this.currentIndex].setNotPlaying();
     this.currentIndex =
       this.currentIndex === 0
-        ? this.musics.length - 1
+        ? this.filteredMusics.length - 1
         : (this.currentIndex -= 1);
-    this.musics[this.currentIndex].setPlaying();
-    return this.musics[this.currentIndex];
-  }
-
-  playNext() {
-    const music = document.getElementById(this.currentPlaying);
-    const musicAudio = music.querySelector("audio");
-    musicAudio.pause();
-
-    const visibleMusics = document.querySelectorAll(
-      '.playlist li:not([style*="display:none"]):not([style*="display: none"])'
-    );
-
-    for (let i = 0; i < visibleMusics.length; i++) {
-      if (visibleMusics[i].id === this.currentPlaying) {
-        if (i === visibleMusics.length - 1) {
-          const audio = visibleMusics[0].querySelector("audio");
-          audio.play();
-          return;
-        } else {
-          const audio = visibleMusics[i + 1].querySelector("audio");
-          audio.play();
-          return;
-        }
-      }
-    }
+    this.filteredMusics[this.currentIndex].setPlaying();
+    return this.filteredMusics[this.currentIndex];
   }
 }
 
@@ -243,6 +233,7 @@ export class AudioPlayer extends EventEmitter {
     );
     playPauseButton.addEventListener("click", () => {
       if (this.playing) {
+        console.log("Entrou no if playin");
         this.pause();
       } else {
         this.play(this.currentMusic);
@@ -253,7 +244,9 @@ export class AudioPlayer extends EventEmitter {
     );
     closeButton.addEventListener("click", () => {
       this.pause();
-      this.rootElement.style.display = "none";
+      this.rootElement.style.visibility = "hidden";
+      this.rootElement.style.opacity = "0";
+      this.rootElement.style.transform = "translateY(100%)";
     });
     const previousButton = this.rootElement.querySelector(
       "#audioPlayerPreviousButton"
@@ -290,25 +283,24 @@ export class AudioPlayer extends EventEmitter {
   }
 
   play(music) {
-    if (this.currentMusic) {
-      this.currentMusic.setNotPlaying();
+    const audio = this.rootElement.querySelector("audio");
+    if (this.paused && this.currentMusic && this.currentMusic.id === music.id) {
+      audio.play();
+      this.tooglePlayPauseIcon(false);
+      this.paused = false;
+      this.playing = true;
+      return;
     }
+    this.currentMusic && this.currentMusic.setNotPlaying();
     this.currentMusic = music;
     this.currentMusic.setPlaying();
     this.playing = true;
-    const audio = this.rootElement.querySelector("audio");
-    if (this.paused) {
-      audio.play();
-      return;
-    }
     this.paused = false;
-    this.rootElement.style.display = "block";
+    this.rootElement.style.visibility = "visible";
+    this.rootElement.style.opacity = "1";
+    this.rootElement.style.transform = "translateY(0)";
     audio.src = music.source;
-    const playPauseButton = this.rootElement.querySelector(
-      "#audioPlayerPlayPauseButton"
-    );
-    playPauseButton.getElementsByTagName("img")[0].src =
-      "images/pause-regular-24.png";
+    this.tooglePlayPauseIcon(false);
     const playingMusicTitle = this.rootElement.querySelector(
       "#playing-music__title"
     );
@@ -319,11 +311,21 @@ export class AudioPlayer extends EventEmitter {
   pause() {
     const audio = this.rootElement.querySelector("audio");
     this.playing = false;
+    this.paused = true;
     audio.pause();
+    this.tooglePlayPauseIcon(true);
+  }
+
+  tooglePlayPauseIcon(play) {
     const playPauseButton = this.rootElement.querySelector(
       "#audioPlayerPlayPauseButton"
     );
-    playPauseButton.getElementsByTagName("img")[0].src =
-      "images/play-regular-24.png";
+    if (play) {
+      playPauseButton.classList.remove("pause-button");
+      playPauseButton.classList.add("play-button");
+    } else {
+      playPauseButton.classList.remove("play-button");
+      playPauseButton.classList.add("pause-button");
+    }
   }
 }

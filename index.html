@@ -8,7 +8,7 @@
     <script type="module" src="src/app.js"></script>
   </head>
   <body>
-    <h2>Músicas Banda XLI ECC Neves</h2>
+    <h2 id="appTitle">Músicas Banda XLI ECC Neves</h2>
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="Pesquisar..." />
       <button id="clearButton" aria-label="Clear input">X</button>
@@ -26,17 +26,24 @@
       </div>
       <div class="controls">
         <div class="controls-buttons">
-          <a href="javascript:void(0)" id="audioPlayerPreviousButton">
-            <img src="images/skip-previous-regular-24.png" />
+          <a
+            href="javascript:void(0)"
+            id="audioPlayerPreviousButton"
+            class="skip-previous-button md"
+          >
           </a>
-          <a href="javascript:void(0)" id="audioPlayerPlayPauseButton">
-            <img src="images/play-regular-24.png" />
+          <a
+            href="javascript:void(0)"
+            id="audioPlayerPlayPauseButton"
+            class="play-button md"
+          >
           </a>
-          <a href="javascript:void(0)" id="audioPlayerNextButton">
-            <img src="images/skip-next-regular-24.png" />
+          <a
+            href="javascript:void(0)"
+            id="audioPlayerNextButton"
+            class="skip-next-button md"
+          >
           </a>
-        </div>
-        <div>
           <span id="playing-music__title"></span>
         </div>
         <a id="audioPlayerCloseButton" href="javascript:void(0)"
