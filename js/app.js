@@ -6,9 +6,9 @@ import { Music, PlayList } from "./views";
 let musicList = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
-  musicList = [
+  musicList = /*[
     new Music("Teste", "teste", "Levada", "C", "acaso-nao-sabeis.html", "1")
-  ];//await fetchCollectionData();
+  ];*/await fetchCollectionData();
   const playList = new PlayList(musicList);
 
   playList.render("app", musicList);
