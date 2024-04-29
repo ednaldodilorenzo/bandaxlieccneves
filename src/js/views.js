@@ -224,8 +224,6 @@ export class PlayList extends EventEmitter {
 export class AudioPlayer extends EventEmitter {
   constructor(rootElementId) {
     super();
-    this.playing = false;
-    this.paused = false;
     this.currentMusic = undefined;
     this.rootElement = document.getElementById(rootElementId);
     this.render();
@@ -243,11 +241,13 @@ export class AudioPlayer extends EventEmitter {
     const playPauseButton = this.rootElement.querySelector(
       "#audioPlayerPlayPauseButton"
     );
+
+    const audio = this.rootElement.querySelector("audio");
     playPauseButton.addEventListener("click", () => {
-      if (this.playing) {
-        this.pause();
-      } else {
+      if (audio.paused) {
         this.play(this.currentMusic);
+      } else {
+        this.pause();
       }
     });
     const closeButton = this.rootElement.querySelector(
@@ -255,15 +255,12 @@ export class AudioPlayer extends EventEmitter {
     );
     closeButton.addEventListener("click", () => {
       this.pause();
-      this.rootElement.style.visibility = "hidden";
-      this.rootElement.style.opacity = "0";
-      this.rootElement.style.transform = "translateY(100%)";
+      this.setVisible(false);
     });
 
     const progressBar = document.getElementById("progress-bar");
     const progress = document.getElementById("progress");
     const progressHandle = document.getElementById("progress-handle");
-    const audio = this.rootElement.querySelector("audio");
     audio.addEventListener("timeupdate", () => {
       const percentage = (audio.currentTime / audio.duration) * 100;
       progress.style.width = percentage + "%";
@@ -282,40 +279,38 @@ export class AudioPlayer extends EventEmitter {
     });
   }
 
-  play(music) {
-    const audio = this.rootElement.querySelector("audio");
-    if (this.paused && this.currentMusic && this.currentMusic.id === music.id) {
-      audio.play();
-      this.tooglePlayPauseIcon(false);
-      this.paused = false;
-      this.playing = true;
+  setVisible(value) {
+    if (value) {
       this.rootElement.style.visibility = "visible";
       this.rootElement.style.opacity = "1";
       this.rootElement.style.transform = "translateY(0)";
-      this.currentMusic.setPlaying();
-      return;
+    } else {
+      this.rootElement.style.visibility = "hidden";
+      this.rootElement.style.opacity = "0";
+      this.rootElement.style.transform = "translateY(100%)";
     }
-    this.currentMusic && this.currentMusic.setNotPlaying();
-    this.currentMusic = music;
-    this.currentMusic.setPlaying();
-    this.playing = true;
-    this.paused = false;
-    this.rootElement.style.visibility = "visible";
-    this.rootElement.style.opacity = "1";
-    this.rootElement.style.transform = "translateY(0)";
-    audio.src = music.source;
+  }
+
+  play(music) {
+    const audio = this.rootElement.querySelector("audio");
+    if (!this.currentMusic || this.currentMusic.id !== music.id) {
+      this.currentMusic && this.currentMusic.setNotPlaying();
+      this.currentMusic = music;
+      audio.src = music.source;
+      const playingMusicTitle = this.rootElement.querySelector(
+        "#playing-music__title"
+      );
+      playingMusicTitle.innerText = music.title;
+    }
+
     this.tooglePlayPauseIcon(false);
-    const playingMusicTitle = this.rootElement.querySelector(
-      "#playing-music__title"
-    );
-    playingMusicTitle.innerText = music.title;
+    this.setVisible(true);
+    this.currentMusic.setPlaying();
     audio.play();
   }
 
   pause() {
     const audio = this.rootElement.querySelector("audio");
-    this.playing = false;
-    this.paused = true;
     audio.pause();
     this.tooglePlayPauseIcon(true);
   }
@@ -325,7 +320,6 @@ export class AudioPlayer extends EventEmitter {
   }
 
   previousTrack() {
-    console.log("Teste");
     if (audio.currentTime >= 4) {
       audio.currentTime = 0;
     } else {
