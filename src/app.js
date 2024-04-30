@@ -2,6 +2,17 @@
 import "./css/styles.css";
 import { PlayList, AudioPlayer } from "./js/views";
 
+const setMusicData = (title) => {
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: title,
+      artist: "Banda ECC Neves",
+      album: "XLI ECC Neves",
+      artwork: [],
+    });
+  }
+} 
+
 document.addEventListener("DOMContentLoaded", async () => {
   const requestModule = await import(
     import.meta.env.DEV ? "./js/request.js" : "./js/request.js"
@@ -10,44 +21,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const playList = new PlayList();
   const audioPlayer = new AudioPlayer("audio-player");
+  const switchPreviousTrack = () => {
+    const previousMusic = playList.getPreviousMusic();
+    if (previousMusic) {
+      setMusicData(previousMusic.title);
+      audioPlayer.play(previousMusic);
+    }
+  };
+
+  const switchNextTrack = () => {
+    const nextMusic = playList.getNextMusic();
+    if (nextMusic) {
+      setMusicData(nextMusic.title);
+      audioPlayer.play(nextMusic);
+    }
+  };
 
   playList.render("app", musicList);
   playList.addEventListener("playlist-music-played", (e) => {
+    setMusicData(e.data.title);
     audioPlayer.play(e.data);
   });
 
-  audioPlayer.addEventListener("previous-clicked", () => {
-    const previousMusic = playList.getPreviousMusic();
-    previousMusic && audioPlayer.play(previousMusic);
-  });
+  audioPlayer.addEventListener("previous-clicked", switchPreviousTrack);
 
-  audioPlayer.addEventListener("next-clicked", () => {
-    const nextMusic = playList.getNextMusic();
-    nextMusic && audioPlayer.play(nextMusic);
-  });
+  audioPlayer.addEventListener("next-clicked", switchNextTrack);
 
   if ("mediaSession" in navigator) {
     // Previous Track
-    navigator.mediaSession.setActionHandler("previoustrack", () => {
-      const previousMusic = playList.getPreviousMusic();
-      if (previousMusic) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: previousMusic.title,
-          artist: "Banda ECC Neves",
-          album: "XLI ECC Neves",
-          artwork: [],
-        });
-        audioPlayer.play(previousMusic);
-      }
-    });
+    navigator.mediaSession.setActionHandler(
+      "previoustrack",
+      switchPreviousTrack
+    );
 
     // Next Track
-    navigator.mediaSession.setActionHandler("nexttrack", () => {
-      const nextMusic = playList.getNextMusic();
-      nextMusic && audioPlayer.play(nextMusic);
-    });
+    navigator.mediaSession.setActionHandler("nexttrack", switchNextTrack);
 
-    navigator.mediaSession.setActionHandler('pause', () => {
+    navigator.mediaSession.setActionHandler("pause", () => {
       audioPlayer.pause();
     });
 

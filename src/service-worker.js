@@ -1,8 +1,3 @@
-import { precacheAndRoute } from 'workbox-precaching';
-
-// Precache files
-precacheAndRoute(self.__WB_MANIFEST);
-
 // service-worker.js
 self.addEventListener('install', event => {
     console.log('Service worker installing...');
@@ -12,7 +7,9 @@ self.addEventListener('install', event => {
             return cache.addAll([
                 '/',
                 '/index.html',
-                '/js/bundle.js',
+                '/js/app.js',
+                '/js/request.js',
+                '/js/vendor.js',
             ]);
         })
     );
