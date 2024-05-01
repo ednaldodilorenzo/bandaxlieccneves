@@ -56,6 +56,7 @@ export class Music extends EventEmitter {
 
   setPlaying() {
     this.rootElement.style.backgroundColor = "#ddb0b0";
+    this.rootElement.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   setNotPlaying() {
