@@ -154,14 +154,10 @@ export class PlayList extends EventEmitter {
 
   render(elementId, musics) {
     this.musics = this.filteredMusics = musics;
-    this.currentIndex = musics ? 0 : -1;
     const rootElement = document.getElementById(elementId);
     for (const music of musics) {
       music.addEventListener("music-played", (e) => {
-        const musicPlayed = this.musics.findIndex(
-          (music) => music.id === e.target.id
-        );
-        this.currentIndex = musicPlayed;
+        this.currentPlaying = music.id;
         this.dispatchEvent("playlist-music-played", e.target);
       });
       this.playlistElement.appendChild(music.render());
@@ -178,7 +174,6 @@ export class PlayList extends EventEmitter {
     this.filteredMusics = this.musics.filter((m) =>
       m.title.toLowerCase().includes(searchString.toLowerCase())
     );
-    this.currentIndex = 0;
     for (const music of this.filteredMusics) {
       const musicElement = document.getElementById(music.id);
       musicElement.style.display = "block";
@@ -198,27 +193,30 @@ export class PlayList extends EventEmitter {
     if (this.filteredMusics.length === 0) {
       return;
     }
-    this.filteredMusics[this.currentIndex].setNotPlaying();
-    this.currentIndex =
-      this.currentIndex + 1 >= this.filteredMusics.length
-        ? 0
-        : (this.currentIndex += 1);
-    this.filteredMusics[this.currentIndex].setPlaying();
-    return this.filteredMusics[this.currentIndex];
+    const musicIndex = this.filteredMusics.findIndex(
+      (music) => music.id === this.currentPlaying
+    );
+    this.filteredMusics[musicIndex].setNotPlaying();
+    const nextIndex =
+      musicIndex + 1 >= this.filteredMusics.length ? 0 : musicIndex + 1;
+    this.filteredMusics[nextIndex].setPlaying();
+    this.currentPlaying = this.filteredMusics[nextIndex].id;
+    return this.filteredMusics[nextIndex];
   }
 
   getPreviousMusic() {
     if (this.filteredMusics.length === 0) {
       return;
     }
-    this.filteredMusics &&
-      this.filteredMusics[this.currentIndex].setNotPlaying();
-    this.currentIndex =
-      this.currentIndex === 0
-        ? this.filteredMusics.length - 1
-        : (this.currentIndex -= 1);
-    this.filteredMusics[this.currentIndex].setPlaying();
-    return this.filteredMusics[this.currentIndex];
+    const musicIndex = this.filteredMusics.findIndex(
+      (music) => music.id === this.currentPlaying
+    );
+    this.filteredMusics && this.filteredMusics[musicIndex].setNotPlaying();
+    const previousIndex =
+      musicIndex === 0 ? this.filteredMusics.length - 1 : musicIndex - 1;
+    this.currentPlaying = this.filteredMusics[previousIndex].id;
+    this.filteredMusics[previousIndex].setPlaying();
+    return this.filteredMusics[previousIndex];
   }
 }
 
