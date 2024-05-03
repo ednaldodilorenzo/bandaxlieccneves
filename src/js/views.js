@@ -146,7 +146,6 @@ export class PlayList extends EventEmitter {
     super();
     this.musics = [];
     this.filteredMusics = [];
-    this.currentIndex = -1;
     this.currentPlaying = "";
     this.playlistElement = document.createElement("ul");
     this.playlistElement.className = "playlist";
