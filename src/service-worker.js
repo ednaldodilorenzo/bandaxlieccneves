@@ -23,7 +23,7 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keyList) => {
       return Promise.all(
         keyList.map((key) => {
-          if (key !== CURRENT_CACHE_STATIC || key !== CURRENT_CACHE_AUDIO) {
+          if (key !== CURRENT_CACHE_STATIC && key !== CURRENT_CACHE_AUDIO) {
             console.log("[Service worker] Removing old cache", key);
             return caches.delete(key);
           }
