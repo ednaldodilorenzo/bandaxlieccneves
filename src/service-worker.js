@@ -51,7 +51,7 @@ self.addEventListener("fetch", (event) => {
       return fetch(fetchRequest).then((fetchResponse) => {
         if (
           !fetchResponse ||
-          fetchResponse.status !== 200 ||
+          fetchResponse.status >= 300 ||
           fetchResponse.type !== "basic"
         ) {
           return fetchResponse;
