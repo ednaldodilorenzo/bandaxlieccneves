@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import "./css/styles.css";
-import { PlayList, AudioPlayer } from "./js/views";
+import "../css/styles.css";
+import { PlayList, AudioPlayer } from "./views";
 
 const setMusicData = (title) => {
   if ("mediaSession" in navigator) {
@@ -15,7 +15,7 @@ const setMusicData = (title) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const requestModule = await import(
-    import.meta.env.DEV ? "./js/request.js" : "./js/request.js"
+    import.meta.env.DEV ? "./request.js" : "./request.js"
   );
   const musicList = await requestModule.fetchCollectionData();
 
