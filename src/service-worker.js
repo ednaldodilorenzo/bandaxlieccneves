@@ -1,5 +1,5 @@
 const CURRENT_CACHE_STATIC = "static-v4";
-const CACHE_DYNAMIC_NAME = "dynamic-v1";
+const CACHE_DYNAMIC_NAME = "dynamic-v2";
 const STATIC_FILES = [
   "/",
   "/index.html",
@@ -39,7 +39,11 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   console.log("Fetching:", event.request.url);
-  if (event.request.url.includes("firestore.googleapis.com")) {
+  if (
+    event.request.url.includes("firestore.googleapis.com") ||
+    event.request.url.includes("firebasestorage.googleapis.com") ||
+    event.request.url.includes("cifras")
+  ) {
     return event.respondWith(fetch(event.request));
   }
   // Cache-Only Strategy
