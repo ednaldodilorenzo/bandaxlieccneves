@@ -1,5 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  initializeFirestore,
+  collection,
+  getDocs,
+  persistentLocalCache,
+  persistentSingleTabManager,
+} from "firebase/firestore";
 import { ref, getStorage, getDownloadURL } from "firebase/storage";
 import { Music } from "./views";
 
@@ -18,7 +24,11 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
-const db = getFirestore(app);
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache(
+    /*settings*/ { tabManager: persistentSingleTabManager() }
+  ),
+});
 
 export async function fetchCollectionData() {
   const querySnapshot = await getDocs(collection(db, "musics"));
