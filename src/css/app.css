@@ -45,14 +45,32 @@ body {
   align-items: center;
 }
 
-.music-list_item__cipher a {
+.music-list_item__cipher__link {
   text-decoration: none;
   color: #008000;
   font-weight: bold;
 }
 
-.music-list_item__cipher a:hover {
+.music-list_item__cipher__link:hover {
   text-decoration: underline;
+}
+
+.music-list_item__cipher__download {
+  background: url("/images/download-solid-24.png");
+  width: 25px;
+  height: 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.music-list_item__cipher__check {
+  background: url("/images/check-solid-24.svg");
+  width: 25px;
+  height: 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .music-lyric {
@@ -236,7 +254,7 @@ body {
 @media (min-width: 768px) {
   /* Styles for tablets and desktop screens */
   #audioPlayerPreviousButton {
-      display: block;
+    display: block;
   }
 }
 
@@ -286,7 +304,7 @@ body {
 
 #playing-music__title {
   font-size: 15px;
-  font-weight: bold;  
+  font-weight: bold;
 }
 
 .progress-handle {
@@ -299,4 +317,30 @@ body {
   background-color: red;
   border-radius: 50%; /* Makes it circular */
   background-origin: padding-box;
+}
+
+
+.progress-ring {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border: 0;
+  display: none;
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: black;
+  width: 20px;
 }

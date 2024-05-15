@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         app: path.resolve(__dirname, "src/index.html"),
-        sw: path.resolve(__dirname, "src/service-worker.js"),
+        sw: path.resolve(__dirname, "src/sw.js"),
       },
       output: {
         // Control how chunks are emitted
@@ -22,7 +22,7 @@ export default defineConfig({
         entryFileNames: (chunkInfo) => {
           // Place service worker at the root
           if (chunkInfo.name === "sw") {
-            return "service-worker.js"; // This ensures the SW is output at the root of the dist folder
+            return "sw.js"; // This ensures the SW is output at the root of the dist folder
           }
           return "js/[name].js"; // Other JS files are placed in the assets folder
         },

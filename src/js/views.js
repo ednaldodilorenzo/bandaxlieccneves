@@ -1,3 +1,10 @@
+import {
+  downloadMP3WithProgress,
+  saveMP3ToDB,
+  getMP3FromDB,
+  deleteRecord,
+} from "./db.js";
+
 const changeTextSize = (e) => {
   const buttonText = e.target.innerText;
   const cipherContent = e.target.parentElement.querySelector("pre");
@@ -43,10 +50,12 @@ class EventEmitter {
 }
 
 export class Music extends EventEmitter {
+  downloaded = false;
+
   constructor(title, source, theme, tone, cipher, id) {
     super();
     this.title = title;
-    this.source = source;
+    this._source = source;
     this.theme = theme;
     this.tone = tone;
     this.cipher = cipher;
@@ -63,6 +72,27 @@ export class Music extends EventEmitter {
     this.rootElement.style.backgroundColor = "white";
   }
 
+  get source() {
+    return new Promise((resolve, reject) => {
+      if (!this.downloaded) {
+        resolve(this._source);
+      }
+
+      return getMP3FromDB(this.id)
+        .then((blob) => {
+          const url = URL.createObjectURL(blob);
+          return resolve(url);
+        })
+        .catch((error) => {
+          return error;
+        });
+    });
+  }
+
+  set source(value) {
+    this._source = value;
+  }
+
   render() {
     this.rootElement.id = this.id;
     this.rootElement.innerHTML = `
@@ -72,14 +102,84 @@ export class Music extends EventEmitter {
               <h5 class="music-list_item__details__theme">${this.theme}</h5>
             </div>            
             <div class="music-list_item__cipher">
-              <a class="music-list_item__cipher__link" href="cifras/${this.cipher}".html>Ver Cifra</a>
+              <a class="music-list_item__cipher__link" href="cifras/${
+                this.cipher
+              }">Ver Cifra</a>
+              <a href="javascript:void(0)" class="music-list_item__cipher__download" ${
+                this.downloaded ? 'style="display :none"' : ""
+              }></a>
+              <button class="progress-ring">
+                <svg width="35" height="35">
+                <circle class="progress-ring__circle" stroke="lightgray" stroke-width="3" fill="transparent" r="10" cx="16" cy="17"/>
+                <circle class="progress-ring__circle progress" stroke="green" stroke-width="3" fill="transparent" r="10" cx="16" cy="17" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                </svg>
+                <img class="icon" src="images/x-regular-24.png"/>                
+              </button>
+              <a href="javascript:void(0)" class="music-list_item__cipher__check"  ${
+                !this.downloaded ? 'style="display :none"' : ""
+              }></a>
               <button class="button-68 music-list_item__play"><img src="images/play-regular-24.png"/></button>
             </div>
         `;
 
-    const musicPlayButton = this.rootElement.getElementsByTagName("button")[0];
+    const musicPlayButton = this.rootElement.getElementsByTagName("button")[1];
     musicPlayButton.addEventListener("click", () => {
       this.dispatchEvent("music-played", this);
+    });
+
+    const downloadButton = this.rootElement.getElementsByClassName(
+      "music-list_item__cipher__download"
+    )[0];
+    downloadButton.addEventListener("click", () => {
+      downloadButton.style.display = "none";      
+
+      const progressRing =
+        this.rootElement.getElementsByClassName("progress-ring")[0];
+      progressRing.style.display = "block";
+
+      const progressCircle = this.rootElement.querySelector(".progress");
+
+      downloadMP3WithProgress(this._source, (loaded, total) => {
+        const percentComplete = Math.round((loaded / total) * 100);
+        const totalProgress = 251.2; // The circumference of the circle
+        const dashOffset =
+          totalProgress - (totalProgress * percentComplete) / 100;
+        progressCircle.style.strokeDashoffset = dashOffset;
+      }).then((response) => {
+        response.blob().then((blob) => {
+          saveMP3ToDB(blob, this.id)
+            .then(() => {
+              progressRing.style.display = "none";
+              const checkIcon = this.rootElement.getElementsByClassName(
+                "music-list_item__cipher__check"
+              )[0];
+              checkIcon.style.display = "block";
+              this.downloaded = true;
+            })
+            .catch(() => {
+              progressRing.style.display = "none";
+              downloadButton.style.display = "block";
+            });
+        });
+      });
+    });
+
+    const checkDownloadButton = this.rootElement.querySelector(
+      ".music-list_item__cipher__check"
+    );
+    checkDownloadButton.addEventListener("click", (e) => {
+      deleteRecord(this.id)
+        .then(() => {
+          downloadButton.style.display = "block";
+          this.downloaded = false;
+          const checkIcon = this.rootElement.getElementsByClassName(
+            "music-list_item__cipher__check"
+          )[0];
+          checkIcon.style.display = "none";
+        })
+        .catch((error) => {
+          console.error("Failed to delete record:", error);
+        });
     });
 
     const viewCipherButton = this.rootElement.querySelector(
@@ -289,12 +389,13 @@ export class AudioPlayer extends EventEmitter {
     }
   }
 
-  play(music) {
+  async play(music) {
     const audio = this.rootElement.querySelector("audio");
     if (!this.currentMusic || this.currentMusic.id !== music.id) {
       this.currentMusic && this.currentMusic.setNotPlaying();
       this.currentMusic = music;
-      audio.src = music.source;
+      audio.src = await music.source;
+      console.log("Source " + audio.src);
       const playingMusicTitle = this.rootElement.querySelector(
         "#playing-music__title"
       );

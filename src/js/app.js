@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
-import "../css/styles.css";
+import "../css/app.css";
 import { PlayList, AudioPlayer } from "./views";
+import { getDownloadedIds } from "./db";
 
 const setMusicData = (title) => {
   if ("mediaSession" in navigator) {
@@ -11,13 +12,18 @@ const setMusicData = (title) => {
       artwork: [],
     });
   }
-} 
+};
 
 document.addEventListener("DOMContentLoaded", async () => {
   const requestModule = await import(
     import.meta.env.DEV ? "./request.js" : "./request.js"
   );
   const musicList = await requestModule.fetchCollectionData();
+  const downloadedMusicIds = await getDownloadedIds();
+
+  for(let i = 0; i < musicList.length; i++) {
+    musicList[i].downloaded = downloadedMusicIds.includes(musicList[i].id);
+  }
 
   const playList = new PlayList();
   const audioPlayer = new AudioPlayer("audio-player");
@@ -80,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/service-worker.js")
+      .register("/sw.js")
       .then((reg) => {
         console.log("Service worker registered!", reg);
       })
