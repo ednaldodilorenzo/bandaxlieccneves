@@ -165,20 +165,22 @@ export class Music extends EventEmitter {
               <a class="music-list_item__cipher__link" href="cifras/${
                 this.cipher
               }">Ver Cifra</a>
-              <a href="javascript:void(0)" class="music-list_item__cipher__download" ${
-                this.downloaded ? 'style="display :none"' : ""
-              }></a>
-              <button class="progress-ring">
-                <svg width="35" height="35">
-                <circle class="progress-ring__circle" stroke="lightgray" stroke-width="3" fill="transparent" r="10" cx="16" cy="17"/>
-                <circle class="progress-ring__circle progress" stroke="green" stroke-width="3" fill="transparent" r="10" cx="16" cy="17" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
-                </svg>
-                <img class="icon" src="images/x-regular-24.png"/>                
-              </button>
-              <a href="javascript:void(0)" class="music-list_item__cipher__check"  ${
-                !this.downloaded ? 'style="display :none"' : ""
-              }></a>
-              <button class="button-68 music-list_item__play"><img src="images/play-regular-24.png"/></button>
+              <div style="display: flex; align-items: center;">                
+                <a href="javascript:void(0)" class="music-list_item__cipher__download" ${
+                  this.downloaded ? 'style="display :none"' : ""
+                }></a>
+                <button class="progress-ring">
+                  <svg width="35" height="35">
+                  <circle class="progress-ring__circle" stroke="lightgray" stroke-width="3" fill="transparent" r="10" cx="16" cy="17"/>
+                  <circle class="progress-ring__circle progress" stroke="green" stroke-width="3" fill="transparent" r="10" cx="16" cy="17" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                  </svg>
+                  <img class="icon" src="images/x-regular-24.png"/>                
+                </button>
+                <a href="javascript:void(0)" class="music-list_item__cipher__check"  ${
+                  !this.downloaded ? 'style="display :none"' : ""
+                }></a>                
+                <button class="button-68 music-list_item__play"><img src="images/play-regular-24.png"/></button>
+              </div>
             </div>
         `;
 

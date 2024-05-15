@@ -6,7 +6,7 @@
   "scripts": {
     "start": "vite --host --port 8080",
     "generate-sw": "workbox injectManifest",
-    "build": "vite build",
+    "build": "vite build && workbox injectManifest",
     "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -2,6 +2,7 @@
 import "../css/app.css";
 import { PlayList, AudioPlayer } from "./views";
 import { getDownloadedIds } from "./db";
+import { fetchCollectionData } from "./request"
 
 const setMusicData = (title) => {
   if ("mediaSession" in navigator) {
@@ -15,10 +16,7 @@ const setMusicData = (title) => {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const requestModule = await import(
-    import.meta.env.DEV ? "./request.js" : "./request.js"
-  );
-  const musicList = await requestModule.fetchCollectionData();
+  const musicList = await fetchCollectionData();
   const downloadedMusicIds = await getDownloadedIds();
 
   for(let i = 0; i < musicList.length; i++) {
