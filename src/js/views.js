@@ -63,13 +63,16 @@ export class Music extends EventEmitter {
     this.rootElement = document.createElement("li");
   }
 
-  setPlaying() {
-    this.rootElement.style.backgroundColor = "#ddb0b0";
-    this.rootElement.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-
-  setNotPlaying() {
-    this.rootElement.style.backgroundColor = "white";
+  /**
+   * @param {Boolean} value
+   */
+  set isPlaying(value) {
+    if (value) {
+      this.rootElement.style.backgroundColor = "#ddb0b0";
+      this.rootElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+      this.rootElement.style.backgroundColor = "white";
+    }
   }
 
   get source() {
@@ -91,6 +94,63 @@ export class Music extends EventEmitter {
 
   set source(value) {
     this._source = value;
+  }
+
+  play() {
+    this.dispatchEvent("music-played", this);
+  }
+
+  download(event) {
+    const downloadButton = event.target;
+    downloadButton.style.display = "none";
+
+    const progressRing =
+      this.rootElement.getElementsByClassName("progress-ring")[0];
+    progressRing.style.display = "block";
+
+    const progressCircle = this.rootElement.querySelector(".progress");
+
+    downloadMP3WithProgress(this._source, (loaded, total) => {
+      const percentComplete = Math.round((loaded / total) * 100);
+      const totalProgress = 251.2; // The circumference of the circle
+      const dashOffset =
+        totalProgress - (totalProgress * percentComplete) / 100;
+      progressCircle.style.strokeDashoffset = dashOffset;
+    }).then((response) => {
+      response.blob().then((blob) => {
+        saveMP3ToDB(blob, this.id)
+          .then(() => {
+            progressRing.style.display = "none";
+            const checkIcon = this.rootElement.getElementsByClassName(
+              "music-list_item__cipher__check"
+            )[0];
+            checkIcon.style.display = "block";
+            this.downloaded = true;
+          })
+          .catch(() => {
+            progressRing.style.display = "none";
+            downloadButton.style.display = "block";
+          });
+      });
+    });
+  }
+
+  deleteFile() {
+    const downloadButton = this.rootElement.querySelector(
+      ".music-list_item__cipher__download"
+    );
+    deleteRecord(this.id)
+      .then(() => {
+        downloadButton.style.display = "block";
+        this.downloaded = false;
+        const checkIcon = this.rootElement.getElementsByClassName(
+          "music-list_item__cipher__check"
+        )[0];
+        checkIcon.style.display = "none";
+      })
+      .catch((error) => {
+        console.error("Failed to delete record:", error);
+      });
   }
 
   render() {
@@ -122,65 +182,20 @@ export class Music extends EventEmitter {
             </div>
         `;
 
-    const musicPlayButton = this.rootElement.getElementsByTagName("button")[1];
-    musicPlayButton.addEventListener("click", () => {
-      this.dispatchEvent("music-played", this);
-    });
+    const musicPlayButton = this.rootElement.querySelector(
+      ".music-list_item__play"
+    );
+    musicPlayButton.addEventListener("click", this.play.bind(this));
 
-    const downloadButton = this.rootElement.getElementsByClassName(
-      "music-list_item__cipher__download"
-    )[0];
-    downloadButton.addEventListener("click", () => {
-      downloadButton.style.display = "none";      
-
-      const progressRing =
-        this.rootElement.getElementsByClassName("progress-ring")[0];
-      progressRing.style.display = "block";
-
-      const progressCircle = this.rootElement.querySelector(".progress");
-
-      downloadMP3WithProgress(this._source, (loaded, total) => {
-        const percentComplete = Math.round((loaded / total) * 100);
-        const totalProgress = 251.2; // The circumference of the circle
-        const dashOffset =
-          totalProgress - (totalProgress * percentComplete) / 100;
-        progressCircle.style.strokeDashoffset = dashOffset;
-      }).then((response) => {
-        response.blob().then((blob) => {
-          saveMP3ToDB(blob, this.id)
-            .then(() => {
-              progressRing.style.display = "none";
-              const checkIcon = this.rootElement.getElementsByClassName(
-                "music-list_item__cipher__check"
-              )[0];
-              checkIcon.style.display = "block";
-              this.downloaded = true;
-            })
-            .catch(() => {
-              progressRing.style.display = "none";
-              downloadButton.style.display = "block";
-            });
-        });
-      });
-    });
+    const downloadButton = this.rootElement.querySelector(
+      ".music-list_item__cipher__download"
+    );
+    downloadButton.addEventListener("click", this.download.bind(this));
 
     const checkDownloadButton = this.rootElement.querySelector(
       ".music-list_item__cipher__check"
     );
-    checkDownloadButton.addEventListener("click", (e) => {
-      deleteRecord(this.id)
-        .then(() => {
-          downloadButton.style.display = "block";
-          this.downloaded = false;
-          const checkIcon = this.rootElement.getElementsByClassName(
-            "music-list_item__cipher__check"
-          )[0];
-          checkIcon.style.display = "none";
-        })
-        .catch((error) => {
-          console.error("Failed to delete record:", error);
-        });
-    });
+    checkDownloadButton.addEventListener("click", this.deleteFile.bind(this));
 
     const viewCipherButton = this.rootElement.querySelector(
       ".music-list_item__cipher__link"
@@ -295,10 +310,10 @@ export class PlayList extends EventEmitter {
     const musicIndex = this.filteredMusics.findIndex(
       (music) => music.id === this.currentPlaying
     );
-    this.filteredMusics[musicIndex].setNotPlaying();
+    this.filteredMusics[musicIndex].isPlaying = false;
     const nextIndex =
       musicIndex + 1 >= this.filteredMusics.length ? 0 : musicIndex + 1;
-    this.filteredMusics[nextIndex].setPlaying();
+    this.filteredMusics[nextIndex].isPlaying = true;
     this.currentPlaying = this.filteredMusics[nextIndex].id;
     return this.filteredMusics[nextIndex];
   }
@@ -310,11 +325,11 @@ export class PlayList extends EventEmitter {
     const musicIndex = this.filteredMusics.findIndex(
       (music) => music.id === this.currentPlaying
     );
-    this.filteredMusics && this.filteredMusics[musicIndex].setNotPlaying();
+    this.filteredMusics && (this.filteredMusics[musicIndex].isPlaying = false);
     const previousIndex =
       musicIndex === 0 ? this.filteredMusics.length - 1 : musicIndex - 1;
     this.currentPlaying = this.filteredMusics[previousIndex].id;
-    this.filteredMusics[previousIndex].setPlaying();
+    this.filteredMusics[previousIndex].isPlaying = true;
     return this.filteredMusics[previousIndex];
   }
 }
@@ -392,7 +407,7 @@ export class AudioPlayer extends EventEmitter {
   async play(music) {
     const audio = this.rootElement.querySelector("audio");
     if (!this.currentMusic || this.currentMusic.id !== music.id) {
-      this.currentMusic && this.currentMusic.setNotPlaying();
+      this.currentMusic && (this.currentMusic.isPlaying = false);
       this.currentMusic = music;
       audio.src = await music.source;
       console.log("Source " + audio.src);
@@ -404,7 +419,7 @@ export class AudioPlayer extends EventEmitter {
 
     this.tooglePlayPauseIcon(false);
     this.setVisible(true);
-    this.currentMusic.setPlaying();
+    this.currentMusic.isPlaying = true;
     audio.play();
   }
 
