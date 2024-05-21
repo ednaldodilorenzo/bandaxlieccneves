@@ -51,11 +51,12 @@ class EventEmitter {
 
 export class Music extends EventEmitter {
   downloaded = false;
+  #_source = "";
 
   constructor(title, source, theme, tone, cipher, id) {
     super();
     this.title = title;
-    this._source = source;
+    this.#_source = source;
     this.theme = theme;
     this.tone = tone;
     this.cipher = cipher;
@@ -78,7 +79,7 @@ export class Music extends EventEmitter {
   get source() {
     return new Promise((resolve, reject) => {
       if (!this.downloaded) {
-        resolve(this._source);
+        resolve(this.#_source);
       }
 
       return getMP3FromDB(this.id)
@@ -93,7 +94,7 @@ export class Music extends EventEmitter {
   }
 
   set source(value) {
-    this._source = value;
+    this.#_source = value;
   }
 
   play() {
@@ -110,7 +111,7 @@ export class Music extends EventEmitter {
 
     const progressCircle = this.rootElement.querySelector(".progress");
 
-    downloadMP3WithProgress(this._source, (loaded, total) => {
+    downloadMP3WithProgress(this.#_source, (loaded, total) => {
       const percentComplete = Math.round((loaded / total) * 100);
       const totalProgress = 251.2; // The circumference of the circle
       const dashOffset =
@@ -184,35 +185,31 @@ export class Music extends EventEmitter {
             </div>
         `;
 
-    const musicPlayButton = this.rootElement.querySelector(
-      ".music-list_item__play"
-    );
-    musicPlayButton.addEventListener("click", this.play.bind(this));
+    this.rootElement
+      .querySelector(".music-list_item__play")
+      .addEventListener("click", this.play.bind(this));
 
-    const downloadButton = this.rootElement.querySelector(
-      ".music-list_item__cipher__download"
-    );
-    downloadButton.addEventListener("click", this.download.bind(this));
+    this.rootElement
+      .querySelector(".music-list_item__cipher__download")
+      .addEventListener("click", this.download.bind(this));
 
-    const checkDownloadButton = this.rootElement.querySelector(
-      ".music-list_item__cipher__check"
-    );
-    checkDownloadButton.addEventListener("click", this.deleteFile.bind(this));
+    this.rootElement
+      .querySelector(".music-list_item__cipher__check")
+      .addEventListener("click", this.deleteFile.bind(this));
 
-    const viewCipherButton = this.rootElement.querySelector(
-      ".music-list_item__cipher__link"
-    );
-    viewCipherButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      let cipherElement = this.rootElement.querySelector(".modal");
-      if (cipherElement) {
-        cipherElement.style.display =
-          cipherElement.style.display === "block" ? "none" : "block";
-        return;
-      }
-      cipherElement = document.createElement("div");
-      cipherElement.className = "modal";
-      cipherElement.innerHTML = `
+    this.rootElement
+      .querySelector(".music-list_item__cipher__link")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        let cipherElement = this.rootElement.querySelector(".modal");
+        if (cipherElement) {
+          cipherElement.style.display =
+            cipherElement.style.display === "block" ? "none" : "block";
+          return;
+        }
+        cipherElement = document.createElement("div");
+        cipherElement.className = "modal";
+        cipherElement.innerHTML = `
             <div class="modal-content">
               <span class="close">&times;</span>
               <h2 class="modal-title">${this.title}</h2>
@@ -220,39 +217,42 @@ export class Music extends EventEmitter {
               <button class="button-68" id="decreaseSize">-A</button>
             </div>  
           `;
-      const closeButton = cipherElement.querySelector(".close");
-      closeButton.addEventListener("click", () => {
-        cipherElement.style.display = "none";
-      });
-
-      const increaseSizeButton = cipherElement.querySelector("#increaseSize");
-      increaseSizeButton.addEventListener("click", changeTextSize);
-      const decreaseSizeButton = cipherElement.querySelector("#decreaseSize");
-      decreaseSizeButton.addEventListener("click", changeTextSize);
-
-      fetch(viewCipherButton.href)
-        .then((response) => {
-          // Check if the request was successful
-          if (response.ok) {
-            return response.text(); // Return the response text (HTML content)
-          }
-          throw new Error("Network response was not ok.");
-        })
-        .then((html) => {
-          // Set the innerHTML of the target element
-          const modalContent = cipherElement.querySelector(".modal-content");
-          const cipherContent = document.createElement("pre");
-          cipherContent.style.padding = "5px";
-          cipherContent.style.marginBottom = "100px";
-          cipherContent.innerHTML = html;
-          modalContent.appendChild(cipherContent);
-          cipherElement.style.display = "block";
-          this.rootElement.appendChild(cipherElement);
-        })
-        .catch((error) => {
-          console.error("There was a problem with the fetch operation:", error);
+        const closeButton = cipherElement.querySelector(".close");
+        closeButton.addEventListener("click", () => {
+          cipherElement.style.display = "none";
         });
-    });
+
+        const increaseSizeButton = cipherElement.querySelector("#increaseSize");
+        increaseSizeButton.addEventListener("click", changeTextSize);
+        const decreaseSizeButton = cipherElement.querySelector("#decreaseSize");
+        decreaseSizeButton.addEventListener("click", changeTextSize);
+
+        fetch(viewCipherButton.href)
+          .then((response) => {
+            // Check if the request was successful
+            if (response.ok) {
+              return response.text(); // Return the response text (HTML content)
+            }
+            throw new Error("Network response was not ok.");
+          })
+          .then((html) => {
+            // Set the innerHTML of the target element
+            const modalContent = cipherElement.querySelector(".modal-content");
+            const cipherContent = document.createElement("pre");
+            cipherContent.style.padding = "5px";
+            cipherContent.style.marginBottom = "100px";
+            cipherContent.innerHTML = html;
+            modalContent.appendChild(cipherContent);
+            cipherElement.style.display = "block";
+            this.rootElement.appendChild(cipherElement);
+          })
+          .catch((error) => {
+            console.error(
+              "There was a problem with the fetch operation:",
+              error
+            );
+          });
+      });
 
     return this.rootElement;
   }

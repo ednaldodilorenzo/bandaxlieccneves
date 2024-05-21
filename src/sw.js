@@ -6,6 +6,21 @@ self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            return caches.delete(cacheName); // Deletes every cache regardless of its name
+          })
+        );
+      })
+      .then(() => self.clients.claim()) // Take control of uncontrolled clients.
+  );
+});
+
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 workbox.precaching.cleanupOutdatedCaches();
 
@@ -28,20 +43,14 @@ workbox.routing.registerRoute(
       /.*(?:firestore.googleapis|firebasestorage.googleapis)\.com.*$/,
     ];
     // Check if the request URL matches any excluded patterns
+    const cleanUrl = url.origin + url.pathname;
     if (
       urlPatternsToExclude.some((pattern) => pattern.test(url.href)) ||
-      isCached(url.href)
+      isCached(cleanUrl)
     ) {
       return false;
     }
-    // Optionally, check if the request is for precached assets
-    // This part depends on your logic for identifying precached URLs
-    // Let's assume you can check with a function `isPrecached` you would need to implement
-    // if (isPrecached(url)) {
-    //     return false;
-    // }
-
-    // If it doesn't match the excluded patterns and isn't precached, apply Cache First strategy
+    
     return true;
   },
   new workbox.strategies.CacheFirst({
