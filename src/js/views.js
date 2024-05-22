@@ -201,7 +201,7 @@ export class Music extends EventEmitter {
       .querySelector(".music-list_item__cipher__link")
       .addEventListener("click", (e) => {
         e.preventDefault();
-        const cipherElement = this.rootElement.querySelector(".modal");
+        let cipherElement = this.rootElement.querySelector(".modal");
         if (cipherElement) {
           cipherElement.style.display =
             cipherElement.style.display === "block" ? "none" : "block";
