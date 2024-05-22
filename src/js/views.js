@@ -227,7 +227,7 @@ export class Music extends EventEmitter {
         const decreaseSizeButton = cipherElement.querySelector("#decreaseSize");
         decreaseSizeButton.addEventListener("click", changeTextSize);
 
-        fetch(viewCipherButton.href)
+        fetch(e.target.href)
           .then((response) => {
             // Check if the request was successful
             if (response.ok) {
