@@ -6,21 +6,6 @@ self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            return caches.delete(cacheName); // Deletes every cache regardless of its name
-          })
-        );
-      })
-      .then(() => self.clients.claim()) // Take control of uncontrolled clients.
-  );
-});
-
 workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 workbox.precaching.cleanupOutdatedCaches();
 

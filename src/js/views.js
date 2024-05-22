@@ -201,7 +201,7 @@ export class Music extends EventEmitter {
       .querySelector(".music-list_item__cipher__link")
       .addEventListener("click", (e) => {
         e.preventDefault();
-        let cipherElement = this.rootElement.querySelector(".modal");
+        const cipherElement = this.rootElement.querySelector(".modal");
         if (cipherElement) {
           cipherElement.style.display =
             cipherElement.style.display === "block" ? "none" : "block";
@@ -217,15 +217,16 @@ export class Music extends EventEmitter {
               <button class="button-68" id="decreaseSize">-A</button>
             </div>  
           `;
-        const closeButton = cipherElement.querySelector(".close");
-        closeButton.addEventListener("click", () => {
+        cipherElement.querySelector(".close").addEventListener("click", () => {
           cipherElement.style.display = "none";
         });
 
-        const increaseSizeButton = cipherElement.querySelector("#increaseSize");
-        increaseSizeButton.addEventListener("click", changeTextSize);
-        const decreaseSizeButton = cipherElement.querySelector("#decreaseSize");
-        decreaseSizeButton.addEventListener("click", changeTextSize);
+        cipherElement
+          .querySelector("#increaseSize")
+          .addEventListener("click", changeTextSize);
+        cipherElement
+          .querySelector("#decreaseSize")
+          .addEventListener("click", changeTextSize);
 
         fetch(e.target.href)
           .then((response) => {
