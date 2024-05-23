@@ -1,8 +1,9 @@
 // Import the functions you need from the SDKs you need
 import "../css/app.css";
-import { PlayList, AudioPlayer } from "./views";
-import { getDownloadedIds } from "./db";
-import { fetchCollectionData } from "./request"
+import PlayList from "./model/playlist.js";
+import AudioPlayer from "./model/audio-player.js";
+import Music from "./model/music.js";
+
 
 const setMusicData = (title) => {
   if ("mediaSession" in navigator) {
@@ -15,14 +16,7 @@ const setMusicData = (title) => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const musicList = await fetchCollectionData();
-  const downloadedMusicIds = await getDownloadedIds();
-
-  for(let i = 0; i < musicList.length; i++) {
-    musicList[i].downloaded = downloadedMusicIds.includes(musicList[i].id);
-  }
-
+document.addEventListener("DOMContentLoaded", async () => {  
   const playList = new PlayList();
   const audioPlayer = new AudioPlayer("audio-player");
   const switchPreviousTrack = () => {
@@ -41,6 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  const musicList = await Music.fetchMusics();
   playList.render("app", musicList);
   playList.addEventListener("playlist-music-played", (e) => {
     setMusicData(e.data.title);

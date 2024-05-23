@@ -7,7 +7,7 @@ import {
   persistentSingleTabManager,
 } from "firebase/firestore";
 import { ref, getStorage, getDownloadURL } from "firebase/storage";
-import { Music } from "./views";
+import Music from "../model/music";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -34,6 +34,11 @@ export async function fetchCollectionData() {
   const querySnapshot = await getDocs(collection(db, "musics"));
   let documents = [];
   querySnapshot.forEach((doc) => {
+    const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(doc.data().rehearsalDate.toDate());    
     documents.push(
       new Music(
         doc.data().title,
@@ -41,7 +46,8 @@ export async function fetchCollectionData() {
         doc.data().category,
         doc.data().tone,
         doc.data().cipher,
-        doc.id
+        doc.id,
+        formattedDate
       )
     );
   });

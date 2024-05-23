@@ -194,9 +194,13 @@ body {
   white-space: nowrap;
 }
 
-.music-list_item__play img {
-  width: 25px;
-  height: 20px;
+.music-list_item__play {
+  background: url("/images/play-regular-24.png");
+  width: 30px;
+  height: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #27ae60;
 }
 
 .button-68:hover {
@@ -320,7 +324,6 @@ body {
   border-radius: 50%; /* Makes it circular */
   background-origin: padding-box;
 }
-
 
 .progress-ring {
   position: relative;
