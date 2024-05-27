@@ -30,11 +30,12 @@ export default class PlayList extends EventEmitter {
       music.style.display = "none";
     }
 
-    this.filteredMusics = this.musics.filter((m) =>
-      `${m.title} ${m.date} ${m.category}`
+    this.filteredMusics = this.musics.filter((m) => {
+      return `${m.title} ${m.date} ${m.theme}`
         .toLowerCase()
-        .includes(searchString.toLowerCase())
-    );
+        .includes(searchString.toLowerCase());
+    });
+
     for (const music of this.filteredMusics) {
       const musicElement = document.getElementById(music.id);
       musicElement.style.display = "block";
