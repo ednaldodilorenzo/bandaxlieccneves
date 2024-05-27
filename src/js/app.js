@@ -4,7 +4,6 @@ import PlayList from "./model/playlist.js";
 import AudioPlayer from "./model/audio-player.js";
 import Music from "./model/music.js";
 
-
 const setMusicData = (title) => {
   if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
@@ -16,7 +15,17 @@ const setMusicData = (title) => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", async () => {  
+if (window.Notification) {
+  if (Notification.permission !== "denied") {
+    Notification.requestPermission((permission) => {
+      if (permission === "granted") {
+        console.log("Permission granted");
+      }
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
   const playList = new PlayList();
   const audioPlayer = new AudioPlayer("audio-player");
   const switchPreviousTrack = () => {
