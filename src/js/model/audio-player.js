@@ -49,6 +49,10 @@ export default class AudioPlayer extends EventEmitter {
       this.dispatchEvent("next-clicked");
     });
 
+    audio.addEventListener("error", () => {
+      this.dispatchEvent("next-clicked");
+    });
+
     progressBar.addEventListener("click", (e) => {
       const barWidth = progressBar.clientWidth;
       const clickPosition = e.offsetX;
