@@ -59,16 +59,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Previous Track
     navigator.mediaSession.setActionHandler(
       "previoustrack",
-      switchPreviousTrack
+      audioPlayer.previousTrack
     );
 
     // Next Track
-    navigator.mediaSession.setActionHandler("nexttrack", switchNextTrack);
+    navigator.mediaSession.setActionHandler("nexttrack", audioPlayer.nextTrack);
 
-    navigator.mediaSession.setActionHandler("pause", () => {
-      audioPlayer.pause();
-    });
-
+    navigator.mediaSession.setActionHandler("pause", audioPlayer.pause);
     // Add other handlers as needed, e.g., play, pause, stop, seekbackward, seekforward
   }
 
