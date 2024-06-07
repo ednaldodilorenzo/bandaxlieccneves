@@ -57,10 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if ("mediaSession" in navigator) {
     // Previous Track
-    navigator.mediaSession.setActionHandler(
-      "previoustrack",
-      audioPlayer.previousTrack
-    );
+    navigator.mediaSession.setActionHandler("previoustrack", () => {
+      audioPlayer.previousTrack();
+    });
 
     // Next Track
     navigator.mediaSession.setActionHandler("nexttrack", () => {
